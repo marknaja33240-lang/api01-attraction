@@ -1,17 +1,16 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+    user: '4JJR88xdmhuKi8Z.root',
+    password: 'pyefQ6SgyfrG3NGF',
+    database: 'attraction_db',
     port: 4000, 
-    // เพิ่มส่วนนี้เข้าไปเพื่อเปิด SSL
     ssl: {
         rejectUnauthorized: false 
     },
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 1,
     queueLimit: 0
 });
 
