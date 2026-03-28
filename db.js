@@ -6,8 +6,9 @@ const pool = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     port: 4000, 
+    // เพิ่มส่วนนี้เข้าไปเพื่อเปิด SSL
     ssl: {
-        rejectUnauthorized: true // บังคับใช้ SSL สำหรับ TiDB Cloud
+        rejectUnauthorized: false 
     },
     waitForConnections: true,
     connectionLimit: 10,
