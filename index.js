@@ -5,12 +5,27 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors()); // เปิดรับทุก Origin
-app.use(express.json()); // รับ-ส่งข้อมูลแบบ JSON
+app.use(cors()); 
+app.use(express.json()); 
 
-// Routes
-const attractionsRouter = require('./routes/attractions');
-app.use('/attractions', attractionsRouter);
+// ดึงข้อมูล Database Connection
+const db = require('./db');
+
+// Routes - เขียนแบบ Direct ในนี้เลยเพื่อลดโอกาสหาไฟล์ route ไม่เจอใน Vercel
+app.get('/attractions', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM attractions');
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// หน้าแรกเผื่อเช็คว่า API รันอยู่ไหม
+app.get('/', (req, res) => {
+    res.send('Attraction API is running...');
+});
 
 // Global Error Handling
 app.use((err, req, res, next) => {
@@ -18,13 +33,4 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Start Server เฉพาะตอนที่รันแบบ Local (ไม่ใช่ Production บน Vercel)
-if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 3333;
-    app.listen(PORT, () => {
-        console.log(`Server is running locally on port ${PORT}`);
-    });
-}
-
-// Export app สำหรับ Vercel (Serverless Functions)
 module.exports = app;
